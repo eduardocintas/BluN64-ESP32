@@ -41,3 +41,4 @@ release/
 sdkconfig.old
 *-backups/
 .vscode/settings.json
+n64-switch/.vscode/settings.json
