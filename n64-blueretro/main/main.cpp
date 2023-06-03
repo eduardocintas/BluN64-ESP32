@@ -1,22 +1,45 @@
 #include "main.h"
 
-BleGamepad bleGamepad("BluN64 Gamepad", "JPZV");
+BleGamepad bleGamepad("BluN64 USC", "USC");
 BleGamepadConfiguration bleGamepadConfig;
 
 TaskHandle_t loopTaskHandle = NULL;
 
-#define buttonsLength 6
+#if CONFIG_BLUN64_PINOUT_TYPE_ORIGINAL || CONFIG_BLUN64_PINOUT_TYPE_YAKARA
+    #define buttonsLength 6
 
-n64Button buttons[buttonsLength] =
-{
-    {BUTTON_A_PIN,      BUTTON_1},
-    {BUTTON_B_PIN,      BUTTON_4},
-    {TRIGGER_L_PIN,     BUTTON_7},
-    {TRIGGER_R_PIN,     BUTTON_8},
-    {TRIGGER_Z_PIN,     BUTTON_9},
-    {BUTTON_START_PIN,  BUTTON_12},
-};
+    n64Button buttons[buttonsLength] =
+    {
+        {BUTTON_A_PIN,      BUTTON_1},
+        {BUTTON_B_PIN,      BUTTON_4},
+        {TRIGGER_L_PIN,     BUTTON_7},
+        {TRIGGER_R_PIN,     BUTTON_8},
+        {TRIGGER_Z_PIN,     BUTTON_9},
+        {BUTTON_START_PIN,  BUTTON_12},
+    };
+#else
+    #define buttonsLength 10
+    n64Button buttons[buttonsLength] =
+    {
+        {BUTTON_A_PIN,      BUTTON_1},
+        {BUTTON_B_PIN,      BUTTON_2},
+        // {C_UP_PIN,          BUTTON_3},
+        // {C_DOWN_PIN,        BUTTON_4},
+        // {C_LEFT_PIN,        BUTTON_5},
+        // {C_RIGHT_PIN,       BUTTON_6},
+        {TRIGGER_L_PIN,     BUTTON_7},
+        {TRIGGER_R_PIN,     BUTTON_8},
+        {TRIGGER_Z_PIN,     BUTTON_9},
+        {TRIGGER_ZR_PIN,    BUTTON_10},
+    };
 
+    #define SpecialButtonsLength 2
+    n64Button SpecialButtons[SpecialButtonsLength] =
+    {
+        {BUTTON_HOME_PIN,   SELECT_BUTTON},
+        {BUTTON_START_PIN,  START_BUTTON},
+    };
+#endif
 int btn_x_axis = 0;
 int btn_y_axis = 0;
 int dpad_axis = 0;
@@ -29,6 +52,9 @@ int prev_c_x_axis = 0;
 int prev_c_y_axis = 0;
 int prev_dpad_axis = 0;
 bool is_button_pressed = false;
+#if CONFIG_BLUN64_PINOUT_TYPE_USC
+bool is_SpecialButton_pressed = false;
+#endif
 bool need_report = false;
 void app_loop(void *params)
 {
@@ -49,6 +75,27 @@ void app_loop(void *params)
                     need_report = true;
                 buttons[i].state = is_button_pressed;
             }
+#if CONFIG_BLUN64_PINOUT_TYPE_USC
+            for (int i = 0; i < SpecialButtonsLength; i++)
+            {
+                if ((is_SpecialButton_pressed = !gpio_get_level(SpecialButtons[i].pinNumber))){
+                    if (SpecialButtons[i].button==START_BUTTON)
+                        bleGamepad.pressStart();
+                    else if (SpecialButtons[i].button==SELECT_BUTTON)
+                        bleGamepad.pressSelect();
+                }else{
+                    if (SpecialButtons[i].button==START_BUTTON)
+                        bleGamepad.releaseStart();
+                    else if (SpecialButtons[i].button==SELECT_BUTTON)
+                        bleGamepad.releaseSelect();
+                }
+
+                if (SpecialButtons[i].state != is_SpecialButton_pressed)
+                    need_report = true;
+                
+                SpecialButtons[i].state = is_SpecialButton_pressed;
+            }
+#endif
 
             if (!gpio_get_level(DPAD_UP_PIN))
                 btn_y_axis++;
@@ -100,6 +147,8 @@ void app_loop(void *params)
 
             bleGamepad.setHat1(dpad_axis);
 
+            //Eduardo Cintas: in android it makes more sense to take  them as normal button, can see themm as axis.
+            // idk if blueretro need that to work well on N64. Sould be grat to have diferent modes.
             btn_x_axis = btn_y_axis = 0;
             if (!gpio_get_level(C_DOWN_PIN))
                 btn_y_axis = -1;
@@ -136,10 +185,10 @@ extern "C" void app_main(void)
     n64_init();
 
     bleGamepadConfig.setAutoReport(false);
-    bleGamepadConfig.setButtonCount(12);
+    bleGamepadConfig.setButtonCount(buttonsLength);
     bleGamepadConfig.setAxesMin(0x0000);
     bleGamepadConfig.setAxesMax(JOYSTICK_ABS_MAX * 2);
-    bleGamepadConfig.setWhichSpecialButtons(true, false, false, false, false, false, false, false);
+    bleGamepadConfig.setWhichSpecialButtons(true, true, false, false, false, false, false, false);
     bleGamepadConfig.setWhichAxes(true, true, false, true, true, false, false, false);
     bleGamepad.begin(&bleGamepadConfig);
 
