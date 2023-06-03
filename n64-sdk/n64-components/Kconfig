@@ -11,6 +11,25 @@ menu "BluN64 Configuration"
 
         config BLUN64_PINOUT_TYPE_YAKARA
             bool "Yakara's"
+
+        config BLUN64_PINOUT_TYPE_USC
+            bool "Universal Smart Controller"
+
+            choice BLUN64_USC_HARDWARE_TYPE
+                prompt "Hardware type"
+                default BLUN64_USC_HARDWARE_TYPE_1
+                help
+                    Select hardware type you have. For reference, the type 1 have the internal led on GPIO16, while type 2 have it on GPIO04
+
+                config BLUN64_USC_HARDWARE_TYPE_1
+                    bool "Type 1: Led on GPIO16"
+
+                config BLUN64_USC_HARDWARE_TYPE_2
+                    bool "Type 2: Led on GPIO04"
+
+                config BLUN64_PINOUT_TYPE_USC
+                    bool "Universal Smart Controller"
+            endchoice
     endchoice
 
 endmenu

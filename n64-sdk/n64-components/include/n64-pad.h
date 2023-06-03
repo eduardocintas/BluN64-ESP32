@@ -41,7 +41,8 @@
 
     // LEDs
     #define LED_MODE_PIN        GPIO_NUM_16
-#else
+#endif
+#if CONFIG_BLUN64_PINOUT_TYPE_YAKARA
     // Buttons
     #define BUTTON_A_PIN        GPIO_NUM_13
     #define BUTTON_B_PIN        GPIO_NUM_27
@@ -76,6 +77,68 @@
 
     // LEDs
     #define LED_MODE_PIN        GPIO_NUM_4
+#endif
+#if CONFIG_BLUN64_PINOUT_TYPE_USC
+    //Compatiblility:
+    //SoMs: ESP-VROOM-32, ESP-VROOM-32D, ESP-WROOM-32, ESP-WROOM-32D
+    //Boards: ESP32 DEVKITV1, Wemos Bluetooth battery(wemosbat)
+    //Clones with same pinout and onboard fuctionality
+
+    // Buttons
+    #define BUTTON_A_PIN        GPIO_NUM_27
+    #define BUTTON_B_PIN        GPIO_NUM_14
+
+    // DPAD
+    #define DPAD_UP_PIN         GPIO_NUM_15 //UP-DOWN crossed on my tests
+    #define DPAD_DOWN_PIN       GPIO_NUM_17
+    #define DPAD_LEFT_PIN       GPIO_NUM_26 //LEFT RIGHT crossed on my tests 
+    #define DPAD_RIGHT_PIN      GPIO_NUM_25
+
+    // Triggers
+    #define TRIGGER_L_PIN       GPIO_NUM_23
+    #define TRIGGER_R_PIN       GPIO_NUM_21
+    #define TRIGGER_Z_PIN       GPIO_NUM_22
+
+    // MISC
+    #define BUTTON_START_PIN    GPIO_NUM_18
+
+    // C-Buttons
+    #define C_UP_PIN            GPIO_NUM_13
+    #define C_DOWN_PIN          GPIO_NUM_19
+    #define C_LEFT_PIN          GPIO_NUM_12 //A high value on GPIO_NUM_12 at boot will set internal flash voltage to 1.8v making WROOM SOMs to boot loop cause them use 3.3v flash.  think we can Use
+    #define C_RIGHT_PIN         GPIO_NUM_5
+
+    // Joystick
+    #define JOYSTICK_X_INT_PIN  GPIO_NUM_35
+    #define JOYSTICK_X_Q_PIN    GPIO_NUM_34
+    #define JOYSTICK_Y_INT_PIN  GPIO_NUM_32
+    #define JOYSTICK_Y_Q_PIN    GPIO_NUM_33
+#endif
+#if CONFIG_BLUN64_USC_HARDWARE_TYPE_1
+    //Compatiblility:
+    //Boards: DOIT ESP32 DEVKITV1
+
+    // MISC
+    #define BUTTON_HOME_PIN     GPIO_NUM_2 //Use free pin
+
+    // Triggers
+    #define TRIGGER_ZR_PIN      GPIO_NUM_16 //Changed to Original PINOUT led pin
+
+    // LEDs
+    #define LED_MODE_PIN        GPIO_NUM_4
+#endif
+#if CONFIG_BLUN64_USC_HARDWARE_TYPE_2
+    //Compatiblility:
+    //Boards: Wemos Bluetooth battery(wemosbat)
+
+    // MISC
+    #define BUTTON_HOME_PIN     GPIO_NUM_16 //Changed to Original PINOUT led pin
+
+    // Triggers
+    #define TRIGGER_ZR_PIN      GPIO_NUM_4  //Use free pin
+
+    // LEDs
+    #define LED_MODE_PIN        GPIO_NUM_2
 #endif
 
 #define JOYSTICK_MAX_Y      40
