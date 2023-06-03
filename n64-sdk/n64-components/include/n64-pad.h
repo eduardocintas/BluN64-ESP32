@@ -89,10 +89,10 @@
     #define BUTTON_B_PIN        GPIO_NUM_14
 
     // DPAD
-    #define DPAD_UP_PIN         GPIO_NUM_15 //UP-DOWN crossed on my tests
-    #define DPAD_DOWN_PIN       GPIO_NUM_17
-    #define DPAD_LEFT_PIN       GPIO_NUM_26 //LEFT RIGHT crossed on my tests 
-    #define DPAD_RIGHT_PIN      GPIO_NUM_25
+    #define DPAD_UP_PIN         GPIO_NUM_17
+    #define DPAD_DOWN_PIN       GPIO_NUM_15
+    #define DPAD_LEFT_PIN       GPIO_NUM_25
+    #define DPAD_RIGHT_PIN      GPIO_NUM_26
 
     // Triggers
     #define TRIGGER_L_PIN       GPIO_NUM_23
