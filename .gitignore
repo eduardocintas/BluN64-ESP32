@@ -40,3 +40,4 @@ release/
 *.log
 sdkconfig.old
 *-backups/
+.vscode/settings.json
